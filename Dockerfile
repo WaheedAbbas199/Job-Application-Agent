@@ -16,5 +16,5 @@ RUN mkdir -p /data/uploads && chown -R appuser:appuser /data
 USER appuser
 ENV UPLOAD_DIR=/data/uploads
 EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD python -c "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/health', timeout=3)"
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${WEB_CONCURRENCY:-2} --proxy-headers"]
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD python -c "import os, urllib.request as u; u.urlopen(f'http://127.0.0.1:{os.getenv(\"PORT\", \"8000\")}/health', timeout=3)"
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers ${WEB_CONCURRENCY:-2} --proxy-headers"]
